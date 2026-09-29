@@ -3,6 +3,10 @@ const client_name = document.getElementById("client-name");
 const client_contact = document.getElementById("client-contact");
 const employee_list = document.getElementById("employees");
 
+function addEvent() {
+    window.location.assign("/event_adder")
+}
+
 async function eventDetails(element) {
     event_title.innerHTML = "Loading...";
     client_name.innerHTML = "Loading...";

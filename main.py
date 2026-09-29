@@ -22,6 +22,10 @@ def index():
     conn.close()
     return render_template("events.html", events=events)
 
+@app.route("/event_adder")
+def event_adder():
+    return render_template("events_adder.html")
+
 # API for database
 @app.get("/api/event_detail/<int:event_id>")
 def event_detail(event_id):

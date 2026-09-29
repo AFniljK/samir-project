@@ -63,7 +63,7 @@
                     <h3 class="border-bottom border-dark pb-2">Event Details:</h3>
                     <div class="border border-dark p-4 mt-4 rounded">
 
-                        <div class="mb-2 p-2 border border-dark rounded">
+                        <div class="my-2 p-2 border border-dark rounded">
                             <h5>Title: <span id="event-title" class="text-primary">Event Title</span></h5>
                         </div>
 
@@ -71,19 +71,27 @@
                         <div class="row">
                             <div class="col border border-dark rounded m-2 py-2 pb-3">
                                 <div>Name:</div>
-                                <span id="client-name">Client Name</span>
+                                <span id="client-name" class="text-primary">Client Name</span>
                             </div>
                             <div class="col border border-dark rounded m-2 py-2 pb-3">
                                 <div>Contact No:</div>
-                                <span id="client-contact">XXXXXXXXXX</span>
+                                <span id="client-contact" class="text-primary">XXXXXXXXXX</span>
                             </div>
                         </div>
 
                         <h5>Assigned Employee(s):</h5>
-                        <div class="border border-dark p-2 mb-2 rounded">
-                            <div id="employees" class="row">
-                                <div class="col-6 text-decoration-underline">None</div>
+                        <div class="row px-2 text-primary">
+                            <div class="border border-dark p-2 mb-2 rounded">
+                                <div id="employees" class="row">
+                                    <div class="col-6 text-decoration-underline">None</div>
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="row p-2">
+                            <button type="button" class="btn btn-danger py-3" onclick="addEvent();">
+                                <h5>Add Event</h5>
+                            </button>
                         </div>
 
                     </div>
@@ -91,7 +99,6 @@
             </div>
         </div>
 
-    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
