@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 app = Flask(__name__)
 
 db_name = "database.db"
@@ -49,5 +49,24 @@ def event_detail(event_id):
 
     conn.close()
     return jsonify(response)
+
+@app.post("/api/add_event")
+def add_event():
+    data = request.get_json()
+
+    event_title = data.get("event_title")
+    event_location = data.get("event_location")
+    event_date = data.get("event_date")
+    client_name = data.get("client_name")
+    client_contact = data.get("client_contact")
+    client_email = data.get("client_email")
+
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute(f"insert into EVENTS (event_title, event_location, event_date, client_name, client_number, client_gmail) values ('{event_title}', '{event_location}', '{event_date}', '{client_name}', '{client_contact}', '{client_email}');")
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "success", "message": "Saved to database"}), 201
 
 app.run(port=3000)
