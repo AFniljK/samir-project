@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect("test.db")
+conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
 event_id = int(input("Event-ID: "))

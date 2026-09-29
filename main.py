@@ -2,11 +2,13 @@ import sqlite3
 from flask import Flask, render_template, jsonify
 app = Flask(__name__)
 
+db_name = "database.db"
+
 @app.route("/")
 def index():
-    conn = sqlite3.connect("test.db")
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("select EVENTS.event_id, EVENTS.event_title, EVENTS.event_date from EVENTS");
+    cursor.execute("select EVENTS.event_id, EVENTS.event_title, EVENTS.event_date from EVENTS;");
     rows = cursor.fetchall()
     events = []
     for row in rows:
@@ -20,9 +22,10 @@ def index():
     conn.close()
     return render_template("events.html", events=events)
 
+# API for database
 @app.get("/api/event_detail/<int:event_id>")
 def event_detail(event_id):
-    conn = sqlite3.connect("test.db")
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
     cursor.execute(f"select * from EVENTS where event_id = '{event_id}';")
