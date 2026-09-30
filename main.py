@@ -82,4 +82,24 @@ def add_event():
 
     return jsonify({"status": "success", "message": "Saved to database"}), 201 # 201 for saved/created entry
 
+@app.put("/api/update_event")
+def update_event():
+    data = request.get_json()
+
+    event_id = data.get("event_id")
+    event_title = data.get("event_title")
+    event_location = data.get("event_location")
+    event_date = data.get("event_date")
+    client_name = data.get("client_name")
+    client_contact = data.get("client_contact")
+    client_email = data.get("client_email")
+
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute(f"update EVENTS set event_title = '{event_title}', event_location = '{event_location}', event_date = '{event_date}', client_name = '{client_name}', client_number = '{client_contact}', client_gmail = '{client_email}' where event_id = {event_id};")
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "success", "message": "Updated database"}), 204 # 204 for updated entry
+
 app.run(port=3000)
