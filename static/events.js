@@ -2,6 +2,12 @@ const event_title = document.getElementById("event-title");
 const client_name = document.getElementById("client-name");
 const client_contact = document.getElementById("client-contact");
 const employee_list = document.getElementById("employees");
+const edit_btn = document.getElementById("edit_btn");
+
+function editEvent(btn) {
+    const event_id = btn.dataset.id;
+    window.location.assign("/edit_event/" + event_id);
+}
 
 function addEvent() {
     window.location.assign("/event_adder")
@@ -24,12 +30,14 @@ async function eventDetails(element) {
         client_name.innerHTML = event_details.client_name;
         client_contact.innerHTML = event_details.client_contact;
 
+        edit_btn.setAttribute("data-id", event_id);
+        edit_btn.disabled = false;
+
         employee_list.innerHTML = "";
         if (event_details.assigned_employees.length === 0) {
             const noemp = document.createElement('div');
             noemp.classList.add('col-6', 'text-decoration-underline');
             noemp.innerHTML = "None";
-            noemp.setAttribute("data-id", event_id)
 
             employee_list.appendChild(noemp);
         } else {
