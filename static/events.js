@@ -29,6 +29,7 @@ async function eventDetails(element) {
             const noemp = document.createElement('div');
             noemp.classList.add('col-6', 'text-decoration-underline');
             noemp.innerHTML = "None";
+            noemp.setAttribute("data-id", event_id)
 
             employee_list.appendChild(noemp);
         } else {
