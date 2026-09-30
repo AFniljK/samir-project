@@ -1,11 +1,15 @@
 import sqlite3
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 app = Flask(__name__)
 
 db_name = "database.db"
 
 @app.route("/")
-def index():
+def home():
+    return redirect(url_for("events"))
+
+@app.get("/events")
+def events():
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("select EVENTS.event_id, EVENTS.event_title, EVENTS.event_date from EVENTS;");
@@ -22,7 +26,7 @@ def index():
     conn.close()
     return render_template("events.html", events=events)
 
-@app.route("/event_adder")
+@app.get("/event_adder")
 def event_adder():
     return render_template("events_adder.html")
 
