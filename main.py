@@ -26,6 +26,10 @@ def events():
     conn.close()
     return render_template("events.html", events=events)
 
+@app.get("/edit_event/<int:event_id>")
+def edit_event(event_id):
+    return render_template("edit_event.html", event_id=event_id)
+
 @app.get("/event_adder")
 def event_adder():
     return render_template("events_adder.html")
