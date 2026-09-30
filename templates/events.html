@@ -39,7 +39,7 @@
             </div>
 
             <!-- Event Details -->
-            <div class="col-md-4 bg-light m-4 h-75 d-flex flex-column border">
+            <div class="col-md-4 bg-light m-4 h-75 d-flex flex-column">
                 <div class="p-4">
                     <h3 class="border-bottom border-dark pb-2">Event Details:</h3>
                     <div class="border border-dark p-4 mt-4 rounded">
@@ -70,7 +70,13 @@
                         </div>
 
                         <div class="row p-2">
-                            <button type="button" class="btn btn-danger py-3" onclick="addEvent();">
+                            <button type="button" class="btn btn-danger py-3" onclick="editEvent(this);">
+                                <h5>Edit Event</h5>
+                            </button>
+                        </div>
+
+                        <div class="row p-2">
+                            <button type="button" class="btn btn-success py-3" onclick="addEvent();">
                                 <h5>Add Event</h5>
                             </button>
                         </div>
