@@ -4,6 +4,28 @@ app = Flask(__name__)
 
 db_name = "database.db"
 
+def event_details(event_id):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+
+    cursor.execute(f"select * from EVENTS where event_id = '{event_id}';")
+    event_detail = cursor.fetchall()[0] # only returns 1 row
+    cursor.execute(f"select ASSIGNMENTS.emp_id, EMPLOYEES.emp_name from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.emp_id where ASSIGNMENTS.event_id = '{event_id}';")
+    assigned_employees = cursor.fetchall()
+    response = {
+        "event_id": event_detail[0],
+        "event_title": event_detail[1],
+        "event_location": event_detail[2],
+        "event_date": event_detail[3],
+        "client_name": event_detail[4],
+        "client_contact": event_detail[5],
+        "client_gmail": event_detail[6],
+        "assigned_employees": assigned_employees
+    }
+
+    conn.close()
+    return response
+
 @app.route("/")
 def home():
     return redirect(url_for("events"))
@@ -28,7 +50,8 @@ def events():
 
 @app.get("/edit_event/<int:event_id>")
 def edit_event(event_id):
-    return render_template("edit_event.html", event_id=event_id)
+    event_detail = event_details(event_id)
+    return render_template("edit_event.html", event_detail=event_detail)
 
 @app.get("/event_adder")
 def event_adder():
@@ -36,26 +59,8 @@ def event_adder():
 
 # API for database
 @app.get("/api/event_detail/<int:event_id>")
-def event_detail(event_id):
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
-
-    cursor.execute(f"select * from EVENTS where event_id = '{event_id}';")
-    event_detail = cursor.fetchall()[0] # only returns 1 row
-    cursor.execute(f"select ASSIGNMENTS.emp_id, EMPLOYEES.emp_name from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.emp_id where ASSIGNMENTS.event_id = '{event_id}';")
-    assigned_employees = cursor.fetchall()
-    response = {
-        "event_id": event_detail[0],
-        "event_title": event_detail[1],
-        "event_location": event_detail[2],
-        "event_date": event_detail[3],
-        "client_name": event_detail[4],
-        "client_contact": event_detail[5],
-        "client_gmail": event_detail[6],
-        "assigned_employees": assigned_employees
-    }
-
-    conn.close()
+def event(event_id):
+    response = event_details(event_id)
     return jsonify(response)
 
 @app.post("/api/add_event")

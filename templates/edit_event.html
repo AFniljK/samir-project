@@ -12,7 +12,10 @@
 <body class="bg-light">
     {% include "partials/navbar.html" %}
     <div class="container">
-        <h1>Editing Event: {{ event_id }}</h1>
+        <h1>Event ID: {{ event_detail.event_id }}</h1>
+        <h1>Event Title: {{ event_detail.event_title }}</h1>
+        <h1>Event Location: {{ event_detail.event_location }}</h1>
+        <h1>Event Date: {{ event_detail.event_date }}</h1>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
