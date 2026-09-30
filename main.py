@@ -71,6 +71,6 @@ def add_event():
     conn.commit()
     conn.close()
 
-    return jsonify({"status": "success", "message": "Saved to database"}), 201
+    return jsonify({"status": "success", "message": "Saved to database"}), 201 # 201 for saved/created entry
 
 app.run(port=3000)
