@@ -10,7 +10,7 @@ def event_details(event_id):
 
     cursor.execute(f"select * from EVENTS where id = '{event_id}';")
     event_detail = cursor.fetchall()[0] # only returns 1 row
-    cursor.execute(f"select ASSIGNMENTS.emp_id, EMPLOYEES.name from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.id where ASSIGNMENTS.event_id = '{event_id}';")
+    cursor.execute(f"select ASSIGNMENTS.emp_id, EMPLOYEES.name, EMPLOYEES.contact from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.id where ASSIGNMENTS.event_id = '{event_id}';")
     assigned_employees = cursor.fetchall()
     response = {
         "event_id": event_detail[0],
@@ -59,6 +59,8 @@ def event_adder():
 
 @app.get("/assign_employees/<int:event_id>")
 def assign_employees(event_id):
+    event_detail = event_details(event_id)
+
     return render_template("assign_employees.html")
 
 # API for database
@@ -105,5 +107,41 @@ def update_event():
     conn.close()
 
     return jsonify({"status": "success", "message": "Updated database"}), 204 # 204 for updated entry
+
+@app.post("/api/add_assignment")
+def add_assignment():
+    data = request.get_json();
+
+    event_id = data.get("event_id");
+    emp_id = data.get("emp_id");
+
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute(f"select * from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
+
+    if cursor.fetchall().length == 0:
+        conn.close()
+        return jsonify({"status", "already assigned"}), 409
+
+    cursor.execute(f"insert into ASSIGNMENTS(emp_id, event_id) VALUES({emp_id}, {event_id});")
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "success"}), 200
+
+@app.delete("/api/delete_assignment")
+def delete_assignment():
+    data = request.get_json();
+
+    event_id = data.get("event_id");
+    emp_id = data.get("emp_id");
+
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute(f"delete from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "success"}), 200
 
 app.run(port=3000)

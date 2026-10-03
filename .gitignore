@@ -221,4 +221,3 @@ __marimo__/
 db.py
 database.db
 db.sqlite
-mock_data.sql
