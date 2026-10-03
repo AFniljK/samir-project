@@ -14,7 +14,7 @@ main_form.addEventListener("submit", async (event) => {
         client_email: form_data.get("client_email"),
     }
 
-    const response = await fetch("/api/update_event", {
+    const response = await fetch("/api/event/update", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",

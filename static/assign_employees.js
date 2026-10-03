@@ -48,7 +48,7 @@ async function assignEmployee(element) {
         event_id: event_id,
     };
 
-    const response = await fetch("/api/add_assignment", {
+    const response = await fetch("/api/assignment/add", {
         method: "POST",
         body: JSON.stringify(payload),
     });
@@ -69,12 +69,10 @@ async function unassignEmployee(element) {
         event_id: event_id,
     };
 
-    await fetch("/api/delete_assignment", {
+    await fetch("/api/assignment/delete", {
         method: "DELETE",
         body: JSON.stringify(payload),
     });
 
     refreshList();
 }
-
-// refreshList();

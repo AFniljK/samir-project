@@ -10,7 +10,7 @@ def event_details(event_id):
 
     cursor.execute(f"select * from EVENTS where id = '{event_id}';")
     event_detail = cursor.fetchall()[0] # only returns 1 row
-    cursor.execute(f"select ASSIGNMENTS.emp_id, EMPLOYEES.name, EMPLOYEES.contact from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.id where ASSIGNMENTS.event_id = '{event_id}';")
+    cursor.execute(f"select EMPLOYEES.id, EMPLOYEES.name, EMPLOYEES.contact from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.id where ASSIGNMENTS.event_id = '{event_id}';")
     assigned_employees = cursor.fetchall()
     response = {
         "event_id": event_detail[0],
@@ -60,8 +60,14 @@ def event_adder():
 @app.get("/assign_employees/<int:event_id>")
 def assign_employees(event_id):
     event_detail = event_details(event_id)
+    emp_list = []
 
-    return render_template("assign_employees.html")
+    payload = {
+        event_id: event_id,
+        emp_list: emp_list,
+    }
+
+    return render_template("assign_employees.html", data=payload)
 
 # API for database
 @app.get("/api/event_detail/<int:event_id>")
@@ -69,7 +75,7 @@ def event(event_id):
     response = event_details(event_id)
     return jsonify(response)
 
-@app.post("/api/add_event")
+@app.post("/api/event/add")
 def add_event():
     data = request.get_json()
 
@@ -88,7 +94,7 @@ def add_event():
 
     return jsonify({"status": "success", "message": "Saved to database"}), 201 # 201 for saved/created entry
 
-@app.put("/api/update_event")
+@app.put("/api/event/update")
 def update_event():
     data = request.get_json()
 
@@ -108,7 +114,7 @@ def update_event():
 
     return jsonify({"status": "success", "message": "Updated database"}), 204 # 204 for updated entry
 
-@app.post("/api/add_assignment")
+@app.post("/api/assignment/add")
 def add_assignment():
     data = request.get_json();
 
@@ -117,8 +123,8 @@ def add_assignment():
 
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute(f"select * from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
 
+    cursor.execute(f"select * from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
     if cursor.fetchall().length == 0:
         conn.close()
         return jsonify({"status", "already assigned"}), 409
@@ -129,7 +135,7 @@ def add_assignment():
 
     return jsonify({"status": "success"}), 200
 
-@app.delete("/api/delete_assignment")
+@app.delete("/api/assignment/delete")
 def delete_assignment():
     data = request.get_json();
 
@@ -138,6 +144,12 @@ def delete_assignment():
 
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
+
+    cursor.execute(f"select * from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
+    if cursor.fetchall().length == 0:
+        conn.close()
+        return jsonify({"status", "already assigned"}), 409
+
     cursor.execute(f"delete from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
     conn.commit()
     conn.close()

@@ -13,7 +13,7 @@ main_form.addEventListener("submit", async (event) => {
         client_email: form_data.get("client_email"),
     }
 
-    const response = await fetch("/api/add_event", {
+    const response = await fetch("/api/event/add", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
