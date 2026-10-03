@@ -57,6 +57,10 @@ def edit_event(event_id):
 def event_adder():
     return render_template("events_adder.html")
 
+@app.get("/assign_employees/<int:event_id>")
+def assign_employees(event_id):
+    return render_template("assign_employees.html")
+
 # API for database
 @app.get("/api/event_detail/<int:event_id>")
 def event(event_id):
