@@ -32,5 +32,6 @@ main_form.addEventListener("submit", async (event) => {
 });
 
 function assignEmployees() {
-    console.log("Trying...");
+    event_id = main_form.dataset.id;
+    window.location.assign("/assign_employees/" + event_id);
 }
