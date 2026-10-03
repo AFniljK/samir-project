@@ -220,3 +220,5 @@ __marimo__/
 # Database & Test Runs
 db.py
 database.db
+db.sqlite
+mock_data.sql
