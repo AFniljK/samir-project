@@ -24,6 +24,7 @@ main_form.addEventListener("submit", async (event) => {
 
     if (response.ok) {
         console.log("Success!");
+        alert("Updated Event!");
     } else {
         alert("Failed to update event!");
     }
