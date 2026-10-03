@@ -2,15 +2,15 @@ import sqlite3
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 app = Flask(__name__)
 
-db_name = "database.db"
+db_name = "db.sqlite"
 
 def event_details(event_id):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
-    cursor.execute(f"select * from EVENTS where event_id = '{event_id}';")
+    cursor.execute(f"select * from EVENTS where id = '{event_id}';")
     event_detail = cursor.fetchall()[0] # only returns 1 row
-    cursor.execute(f"select ASSIGNMENTS.emp_id, EMPLOYEES.emp_name from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.emp_id where ASSIGNMENTS.event_id = '{event_id}';")
+    cursor.execute(f"select ASSIGNMENTS.emp_id, EMPLOYEES.name from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.id where ASSIGNMENTS.event_id = '{event_id}';")
     assigned_employees = cursor.fetchall()
     response = {
         "event_id": event_detail[0],
@@ -34,7 +34,7 @@ def home():
 def events():
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("select EVENTS.event_id, EVENTS.event_title, EVENTS.event_date from EVENTS;");
+    cursor.execute("select EVENTS.id, EVENTS.title, EVENTS.date from EVENTS;");
     rows = cursor.fetchall()
     events = []
     for row in rows:
@@ -76,7 +76,7 @@ def add_event():
 
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute(f"insert into EVENTS (event_title, event_location, event_date, client_name, client_number, client_gmail) values ('{event_title}', '{event_location}', '{event_date}', '{client_name}', '{client_contact}', '{client_email}');")
+    cursor.execute(f"insert into EVENTS (title, location, date, client_name, client_contact, client_email) values ('{event_title}', '{event_location}', '{event_date}', '{client_name}', '{client_contact}', '{client_email}');")
     conn.commit()
     conn.close()
 
@@ -96,7 +96,7 @@ def update_event():
 
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute(f"update EVENTS set event_title = '{event_title}', event_location = '{event_location}', event_date = '{event_date}', client_name = '{client_name}', client_number = '{client_contact}', client_gmail = '{client_email}' where event_id = {event_id};")
+    cursor.execute(f"update EVENTS set title = '{event_title}', location = '{event_location}', date = '{event_date}', client_name = '{client_name}', client_contact = '{client_contact}', client_email = '{client_email}' where id = {event_id};")
     conn.commit()
     conn.close()
 
