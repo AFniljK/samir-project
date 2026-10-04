@@ -70,7 +70,7 @@ def assign_employees(event_id):
 
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute(f"select EMPLOYEES.id, EMPLOYEES.name, EMPLOYEES.contact from EMPLOYEES left join ASSIGNMENTS on ASSIGNMENTS.emp_id = EMPLOYEES.id left join EVENTS on EVENTS.id = ASSIGNMENTS.event_id where EVENTS.date IS NULL or EVENTS.date <> '{event_detail["event_date"]}' or ASSIGNMENTS.event_id = {event_detail["event_id"]};")
+    cursor.execute(f"select EMPLOYEES.id, EMPLOYEES.name, EMPLOYEES.contact from EMPLOYEES left join ASSIGNMENTS on ASSIGNMENTS.emp_id = EMPLOYEES.id left join EVENTS on EVENTS.id = ASSIGNMENTS.event_id where EVENTS.date IS NULL or EVENTS.date <> '{event_detail['event_date']}' or ASSIGNMENTS.event_id = {event_detail['event_id']};")
     rows = cursor.fetchall()
     conn.close()
 
