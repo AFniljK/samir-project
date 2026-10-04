@@ -17,7 +17,6 @@ async function eventDetails(element) {
     event_title.innerHTML = "Loading...";
     client_name.innerHTML = "Loading...";
     client_contact.innerHTML = "Loading...";
-    employee_list.innerHTML = "Loading...";
     const event_id = element.dataset.id;
 
     try {
@@ -33,15 +32,20 @@ async function eventDetails(element) {
         edit_btn.setAttribute("data-id", event_id);
         edit_btn.disabled = false;
 
+        const resp = await fetch("/api/event_employees/" + event_id);
+        if (!resp.ok) throw new Error("Employees not Found!");
+
+        const data = await resp.json();
+
         employee_list.innerHTML = "";
-        if (event_details.assigned_employees.length === 0) {
+        if (data.emp_list.length === 0) {
             const noemp = document.createElement('div');
             noemp.classList.add('col-6', 'text-decoration-underline');
             noemp.innerHTML = "None";
 
             employee_list.appendChild(noemp);
         } else {
-            for (const emp of event_details.assigned_employees) {
+            for (const emp of data.emp_list) {
                 const employee = document.createElement('div');
                 employee.classList.add('col-6', 'text-decoration-underline');
                 employee.innerHTML = emp[1];

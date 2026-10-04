@@ -4,14 +4,22 @@ app = Flask(__name__)
 
 db_name = "db.sqlite"
 
+# Retrieves Assigned Employees for Events
+def event_employees(event_id):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute(f"select EMPLOYEES.id, EMPLOYEES.name, EMPLOYEES.contact from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.id where ASSIGNMENTS.event_id = '{event_id}';")
+    assigned_employees = cursor.fetchall()
+    conn.close()
+    return assigned_employees
+
+# Retrieves Event Iformation
 def event_details(event_id):
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
     cursor.execute(f"select * from EVENTS where id = '{event_id}';")
     event_detail = cursor.fetchall()[0] # only returns 1 row
-    cursor.execute(f"select EMPLOYEES.id, EMPLOYEES.name, EMPLOYEES.contact from ASSIGNMENTS INNER JOIN EMPLOYEES ON ASSIGNMENTS.emp_id = EMPLOYEES.id where ASSIGNMENTS.event_id = '{event_id}';")
-    assigned_employees = cursor.fetchall()
     response = {
         "event_id": event_detail[0],
         "event_title": event_detail[1],
@@ -20,7 +28,6 @@ def event_details(event_id):
         "client_name": event_detail[4],
         "client_contact": event_detail[5],
         "client_gmail": event_detail[6],
-        "assigned_employees": assigned_employees
     }
 
     conn.close()
@@ -60,11 +67,28 @@ def event_adder():
 @app.get("/assign_employees/<int:event_id>")
 def assign_employees(event_id):
     event_detail = event_details(event_id)
-    emp_list = []
+
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute(f"select EMPLOYEES.id, EMPLOYEES.name, EMPLOYEES.contact from EMPLOYEES left join ASSIGNMENTS on ASSIGNMENTS.emp_id = EMPLOYEES.id left join EVENTS on EVENTS.id = ASSIGNMENTS.event_id where EVENTS.date IS NULL or EVENTS.date <> '{event_detail["event_date"]}' or ASSIGNMENTS.event_id = {event_detail["event_id"]};")
+    rows = cursor.fetchall()
+    conn.close()
+
+    emps = []
+    seen = set()
+
+    for row in rows:
+        id = row[0]
+        if id in seen:
+            continue
+        seen.add(id)
+        name = row[1]
+        contact = row[2]
+        emps.append({"id": id, "name": name, "contact": contact})
 
     payload = {
-        event_id: event_id,
-        emp_list: emp_list,
+        "event_id": event_id,
+        "emp_list": emps,
     }
 
     return render_template("assign_employees.html", data=payload)
@@ -74,6 +98,11 @@ def assign_employees(event_id):
 def event(event_id):
     response = event_details(event_id)
     return jsonify(response)
+
+@app.get("/api/event_employees/<int:event_id>")
+def eventEMP(event_id):
+    rows = event_employees(event_id)
+    return jsonify({"emp_list": rows})
 
 @app.post("/api/event/add")
 def add_event():
@@ -125,7 +154,7 @@ def add_assignment():
     cursor = conn.cursor()
 
     cursor.execute(f"select * from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
-    if cursor.fetchall().length == 0:
+    if cursor.fetchall() == None:
         conn.close()
         return jsonify({"status", "already assigned"}), 409
 
@@ -146,9 +175,10 @@ def delete_assignment():
     cursor = conn.cursor()
 
     cursor.execute(f"select * from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
-    if cursor.fetchall().length == 0:
+    rows = cursor.fetchall();
+    if len(rows) == 0:
         conn.close()
-        return jsonify({"status", "already assigned"}), 409
+        return jsonify({"status", "does not exist"}), 404
 
     cursor.execute(f"delete from ASSIGNMENTS where event_id = {event_id} and emp_id = {emp_id};")
     conn.commit()
